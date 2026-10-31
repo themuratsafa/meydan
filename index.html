@@ -1,0 +1,523 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Meydan Sipariş</title>
+<meta name="theme-color" content="#2E7A3A">
+<meta name="description" content="Meydan Markt GmbH günlük sipariş ve stok listesi">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Meydan">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+img{max-width:100%}
+/* Layout: one phone column — section switch, list/summary tabs, swipeable product rows */
+:root{
+  --bg:#EFF3EE; --surface:#FFFFFF; --sunk:#E3E9E3; --ink:#16201A; --muted:#5B6A60; --line:#D3DCD4;
+  --veg:#2E7A3A; --veg-soft:#DDEEDD; --fruit:#C9581A; --fruit-soft:#F8E3D3;
+  --yes:#1E8748; --yes-soft:#D7F0E0; --ord:#C2410C; --ord-soft:#FBE3D3;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --acc:var(--veg); --acc-soft:var(--veg-soft);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111613; --surface:#1A211C; --sunk:#232C25; --ink:#E7EEE8; --muted:#97A69B; --line:#2E3931;
+  --veg:#5CC26C; --veg-soft:#1F3323; --fruit:#F08A48; --fruit-soft:#3A2618;
+  --yes:#4CC77E; --yes-soft:#173325; --ord:#F7894A; --ord-soft:#3B2216; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111613; --surface:#1A211C; --sunk:#232C25; --ink:#E7EEE8; --muted:#97A69B; --line:#2E3931;
+  --veg:#5CC26C; --veg-soft:#1F3323; --fruit:#F08A48; --fruit-soft:#3A2618;
+  --yes:#4CC77E; --yes-soft:#173325; --ord:#F7894A; --ord-soft:#3B2216; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;overflow:hidden;
+  padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+body.obst{--acc:var(--fruit);--acc-soft:var(--fruit-soft)}
+.app{max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:7px;padding-block:6px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+h1{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.02em;margin:0;text-transform:uppercase}
+.date{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:10px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;color:var(--muted);font-family:var(--display);font-weight:700;font-size:16px;
+  letter-spacing:.04em;text-transform:uppercase;padding:6px;border-radius:8px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--acc);box-shadow:0 1px 3px rgb(0 0 0/.12)}
+.steps{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.steps button{border:0;background:none;color:var(--muted);font:600 14px var(--body);padding:5px 2px 7px;cursor:pointer;
+  border-bottom:3px solid transparent;margin-bottom:-1px}
+.steps button[aria-current="true"]{color:var(--ink);border-color:var(--acc)}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 12px var(--body);padding:4px 9px;border-radius:999px;cursor:pointer;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.chip.v b{color:var(--yes)}.chip.o b{color:var(--ord)}
+.chip[aria-pressed="true"] b{color:inherit}
+button:focus-visible,input:focus-visible,.fg:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+main{flex:1;min-height:0;display:flex;flex-direction:column}
+.tools{display:flex;gap:6px;margin-bottom:5px}
+.tools input{flex:1;min-width:0;font:15px var(--body);padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink)}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 10px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:#fff}
+.hint{color:var(--muted);font-size:12px;margin:0 0 5px;display:flex;justify-content:space-between;gap:8px}
+.hint .r{color:var(--yes);font-weight:600}.hint .l{color:var(--ord);font-weight:600}
+.list{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:4px;padding-bottom:12px;overscroll-behavior:contain}
+.row{position:relative;border-radius:9px;overflow:hidden;flex:none}
+.bg{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center;padding:0 14px;
+  font:800 15px var(--display);letter-spacing:.06em}
+.bg .l{color:var(--yes)}.bg .r{color:var(--ord)}
+.row.sw-r .bg{background:var(--yes-soft)}.row.sw-r .bg .r{visibility:hidden}
+.row.sw-l .bg{background:var(--ord-soft)}.row.sw-l .bg .l{visibility:hidden}
+.fg{position:relative;display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:6px 8px;min-height:46px;
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;touch-action:pan-y;user-select:none;-webkit-user-select:none;
+  cursor:pointer;transition:transform .2s ease}
+.fg.drag{transition:none}
+.row.var .fg{border-color:var(--yes);box-shadow:inset 4px 0 0 var(--yes)}
+.row.sip .fg{border-color:var(--ord);box-shadow:inset -4px 0 0 var(--ord)}
+.em{font-size:20px;text-align:center}
+.nm{font-weight:600;line-height:1.15;min-width:0;font-size:14px}
+.nm small{display:block;color:var(--muted);font-weight:400;font-size:10px;letter-spacing:.04em}
+.side{display:flex;align-items:center;gap:6px}
+.badge{min-width:62px;text-align:center;border-radius:8px;padding:3px 7px;line-height:1.05}
+.badge b{display:block;font:800 18px var(--display);font-variant-numeric:tabular-nums}
+.badge span{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.row.var .badge{background:var(--yes-soft);color:var(--yes)}
+.row.sip .badge{background:var(--ord-soft);color:var(--ord)}
+.minus{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:18px;cursor:pointer;flex:none}
+.empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:24px}
+.empty strong{display:block;font-family:var(--display);font-size:22px;color:var(--ink);margin-bottom:4px}
+.res{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:16px}
+.res h3{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 5px;display:flex;justify-content:space-between}
+.res h3 span{color:var(--muted);font-variant-numeric:tabular-nums}
+.res h3.o{color:var(--ord)}.res h3.v{color:var(--yes)}
+.ritem{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line);margin-bottom:4px;font-size:14px}
+.ritem .q{font-weight:700;font-variant-numeric:tabular-nums}
+.ritem.o{border-left:4px solid var(--ord)}.ritem.o .q{color:var(--ord)}
+.ritem.v{border-left:4px solid var(--yes)}.ritem.v .q{color:var(--yes)}
+.resbar{display:flex;gap:6px;flex-wrap:wrap}.resbar .btn{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:9px 14px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:5;white-space:nowrap}
+.toast.on{opacity:1}
+textarea.copy{width:100%;height:150px;font:12px ui-monospace,monospace;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px}
+@keyframes bump{50%{transform:scale(1.15)}}
+.badge.bump{animation:bump .2s}
+@media (prefers-reduced-motion:reduce){.fg{transition:none}.badge.bump{animation:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header><h1>Meydan Markt</h1><span class="date" id="date"></span></header>
+  <div class="seg" role="group" aria-label="Bölüm">
+    <button id="tab-g" data-tab="g">Sebze</button>
+    <button id="tab-o" data-tab="o">Meyve</button>
+  </div>
+  <nav class="steps">
+    <button id="st-liste" data-view="liste">Ürün listesi</button>
+    <button id="st-ozet" data-view="ozet">Özet ve PDF</button>
+  </nav>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const DATA = {
+g:`RÖMER SALAT|Römersalat|🥬
+RADISIEN|Radieschen|🌱|Bund
+RETICH|Rettich weiß|🥕
+RETICH SCHWARTZ|Rettich schwarz|🥔
+ROTEBEETE|Rote Bete|🟣
+ROCCULA|Rucola|🌿
+SOGAN TAZE|Frühlingszwiebeln|🌱|Bund
+SOGA NETZ 1 KG|Zwiebeln Netz 1 kg|🧅
+SOG NET KIR 1 KG|Rote Zwiebeln Netz 1 kg|🧅
+SOGAN NETZ 5 KG|Zwiebeln Netz 5 kg|🧅
+SOGA KIRM 10 KG|Rote Zwiebeln 10 kg|🧅
+SOGA GEM 25 KG|Gemüsezwiebeln 25 kg|🧅
+SALGAM|Weiße Rüben|🥔
+SPITZKOHL|Spitzkohl|🥬
+SAMIRSAK TAZE|Knoblauch frisch|🧄
+SAMIRSAK 250|Knoblauch 250 g|🧄
+SAMIRSAK 500|Knoblauch 500 g|🧄
+SUPPEN GRÜN|Suppengrün|🥕|Bund
+STAUNSELLERI|Staudensellerie|🥬
+KOPFSELERI|Knollensellerie|🥔
+KORIANDER|Koriander|🌿|Bund
+KOHLRABI|Kohlrabi|🥬
+KABAK BEYAZ|Zucchini hell|🥒
+KABAK BEYAZ SCH|Zucchini hell Schale|🥒
+KABAK YESIL|Zucchini grün|🥒
+KÜRBIS|Kürbis|🎃
+KIL SIVRI|Peperoni dünn scharf|🌶️
+LOLO ROSSO|Lollo Rosso|🥬
+LOLO BIANDO|Lollo Bianco|🥬
+LIMETTEN|Limetten|🍋‍🟩
+LIMON BEUTEL|Zitronen Beutel|🍋
+LIMON|Zitronen|🍋
+LÖWENZAHN|Löwenzahn|🌿|Bund
+LAHAN DEUTSCH|Weißkohl Deutschland|🥬
+LAHANA ROTKOHL|Rotkohl|🥬
+LAHANA TR|Weißkohl Türkei|🥬
+MAYDANOZ ITAL|Petersilie glatt|🌿|Bund
+MANGOLD|Mangold|🥬|Bund
+MANTAR FULL|Champignons voll|🍄
+MANTAR|Champignons|🍄
+MANTAR AUSTER|Austernpilze|🍄
+GURKE DÜZ|Gurken|🥒
+GURKE CITIR|Knackgurken|🥒
+GURKE TURSU|Einlegegurken|🥒
+GURKE MINI|Minigurken|🥒
+GUR MINI SCHAL|Minigurken Schale|🥒
+BEUT.PATLICAN TR|Auberginen Beutel TR|🍆
+BEUT.KAPIA|Kapia-Paprika Beutel|🫑
+BEUT.SIVRI|Spitzpaprika Beutel|🫑
+BEUT.CARLI|Charleston-Paprika Beutel|🫑
+BEUT.DOLMA|Paprika zum Füllen Beutel|🫑
+BEUT.ACI YESIL|Peperoni grün scharf Beutel|🌶️
+BEUT.ACI KIRMIZ|Peperoni rot scharf Beutel|🌶️
+BEUT ÜC BURUN|Chili Beutel (Üç Burun)|🌶️
+ACI YESIL MAROK|Peperoni grün scharf Marokko|🌶️
+ACI KIRMIZI MAR|Peperoni rot scharf Marokko|🌶️
+ACI AFK TOMBUL|Chili Afrika rund|🌶️
+ACI AFK KILL|Chili Afrika dünn|🌶️
+BLUMEN KOHL|Blumenkohl|🥦
+BAKLA TR|Dicke Bohnen TR|🫛
+BROKOLI|Brokkoli|🥦
+PAPRIKA MIX BEU|Paprika Mix Beutel|🫑
+PAPRIKA ROT BEU|Paprika rot Beutel|🫑
+PAPRIKA ROT|Paprika rot|🫑
+PAPRIKA GELB|Paprika gelb|🫑
+PAPRIKA GRÜN|Paprika grün|🫑
+PATLICAN TR TIPI|Auberginen TR-Typ|🍆
+PATLICAN SPA|Auberginen Spanien|🍆
+PATLICAN HOL|Auberginen Holland|🍆
+PIRASA DEU|Porree Deutschland|🥬
+PATATES GRIL|Grillkartoffeln|🥔
+PATATES TAZE|Frühkartoffeln|🥔
+PATATES TATLI|Süßkartoffeln|🍠
+PATATSNETZ 5 KG|Kartoffeln Netz 5 kg|🥔
+TOMATE STR|Strauchtomaten|🍅
+TOMATE LOSE|Tomaten lose|🍅
+TOMATE FLA|Flaschentomaten|🍅
+TOMATE CHR SCH|Cherrytomaten Schale|🍅
+TOMATE EIER|Eiertomaten|🍅
+TOMATE TURSUL|Tomaten zum Einlegen|🍅
+FASULYE BEUTEL|Grüne Bohnen Beutel|🫛
+FASULYE TR BEUT|Grüne Bohnen TR Beutel|🫛
+FASULYE SPA|Grüne Bohnen Spanien|🫛
+ISPANAK BUND|Spinat Bund|🥬|Bund
+HAVUC LOSE|Karotten lose|🥕
+CORNO TR BOYTE|Corno-Paprika TR|🫑
+CHERIMOYA|Cherimoya|🍈
+CHINAKOHL|Chinakohl|🥬
+DILL KASA|Dill Kiste|🌿
+NANE DEU|Minze Deutschland|🌿|Bund
+INGWER|Ingwer|🫚
+EISBERGSALAT|Eisbergsalat|🥬
+PALETTE TOMATE FL|Flaschentomaten Palette|🍅|Palette
+PALETTE TOMATE ST|Strauchtomaten Palette|🍅|Palette
+PALETTE LIMETTEN|Limetten Palette|🍋‍🟩|Palette
+PALETTE KARTOFFEL 5 KG|Kartoffeln 5 kg Palette|🥔|Palette
+PALETTE ZWIEBEL 5 KG|Zwiebeln 5 kg Palette|🧅|Palette
+HOKAIDO|Hokkaido-Kürbis|🎃
+SEMIZ OTU|Portulak|🌿|Bund
+ACUR|Acur-Gurke|🥒
+KELEK|Kelek (unreife Melone)|🍈
+RABABA|Rhabarber|🌿
+MISIR TAZE|Mais frisch|🌽
+RAPA|Stängelkohl (Rapa)|🥬
+STECKRÜBEN|Steckrüben|🥔
+SOGAN DIKME|Steckzwiebeln|🧅
+TERE BUND|Kresse Bund|🌱|Bund
+KUZU KULAGI|Sauerampfer|🌿|Bund
+EBEM GÖMECI|Malve|🌿|Bund
+ENGINAR|Artischocken|🌿
+JALEPONE LOS|Jalapeños lose|🌶️
+BARBUNYA TR|Borlotti-Bohnen TR|🫘`,
+o:`AVOCADO|Avocado|🥑
+AVOCADO HAS|Avocado Hass|🥑
+AYVA|Quitten|🍐
+ARMUT ABATA|Birnen Abate|🍐
+ARMUT FORELLE|Birnen Forelle|🍐
+ARMUT SANTAM|Birnen Santa Maria|🍐
+ARMUT WIYEMS|Birnen Williams|🍐
+ARMUT DEVECI|Birnen Deveci|🍐
+ANANAS|Ananas|🍍
+KARPUZ|Wassermelonen|🍉
+KARPUZCEKIREKSIZ|Wassermelonen kernlos|🍉
+KAVUN IRAN|Melonen Iran|🍈
+KAVUN TR|Melonen Türkei|🍈
+KAVUN GALIA|Galiamelonen|🍈
+KAVUN YESIL|Melonen grün|🍈
+KAVUN SARI|Honigmelonen gelb|🍈
+KAYSI|Aprikosen|🍑
+KAYSI SEKERPAR|Aprikosen süß|🍑
+KAKI|Kaki|🟠
+KECI BOYNUZU|Johannisbrot|🫘
+KIRAZ|Kirschen|🍒
+KIRAZ TR|Kirschen TR|🍒
+KESTANE TR|Esskastanien TR|🌰
+KOKUSNUSS|Kokosnuss|🥥
+KIWI|Kiwi|🥝
+ÜZÜM CRIMSON|Trauben Crimson|🍇
+ÜZÜM SULTANAS|Trauben Sultana|🍇
+ÜZÜM M SCHWAR|Trauben Muskat schwarz|🍇
+ÜZÜM M BEYAZ|Trauben Muskat weiß|🍇
+ÜZÜM REDGLOBE|Trauben Red Globe|🍇
+ÜZÜM CEKIRDEK|Trauben mit Kernen|🍇
+ÜZÜM SI LAVELLA|Trauben Lavella|🍇
+ERIK CAN TR|Grüne Pflaumen TR|🟢
+ERIK KIRMIZI|Pflaumen rot|🔴
+ERIK SARI|Pflaumen gelb|🟡
+ERIK ZWETSCHEN|Zwetschgen|🟣
+ELMA GOLDEN|Äpfel Golden|🍏
+ELMA ROYAL GAL|Äpfel Royal Gala|🍎
+ELMA REDD/CHIEF|Äpfel Red Chief|🍎
+ELMA GRENY|Äpfel Granny Smith|🍏
+ELMA PINKLADY|Äpfel Pink Lady|🍎
+ELMA FUSCHI|Äpfel Fuji|🍎
+ELMA FRANSIZ TAZ|Äpfel Frankreich|🍎
+ELMA WAINACH|Äpfel Weinach|🍎
+ERDBEEREN SP|Erdbeeren Spanien|🍓
+ERDBEEREN DE|Erdbeeren Deutschland|🍓
+PORTAKAL SAF|Saftorangen|🍊
+PORTAKAL|Orangen|🍊
+PORTAKAL TR|Orangen TR|🍊
+PORTAKAL KANN|Orangen Kann|🍊
+PORTAKAL BEUT|Orangen Beutel|🍊
+PORT KANN BEUT|Orangen Kann Beutel|🍊
+POMELA|Pomelo|🍈
+MANDALIN TR|Mandarinen TR|🍊
+MANDALIN|Mandarinen|🍊
+MANDAL DALI|Mandarinen mit Blatt|🍊
+MANDAL BEU|Mandarinen Beutel|🍊
+MANGO|Mango|🥭
+MUSMULA|Mispeln|🟤
+NAR|Granatäpfel|🔴
+NAR TR|Granatäpfel TR|🔴
+NAR TATLI|Granatäpfel süß|🔴
+NEKTARIN LOS|Nektarinen lose|🍑
+SHARONI|Sharonfrucht|🟠
+SATSUMAS TR|Satsumas TR|🍊
+SEFTALI|Pfirsiche|🍑
+SEFTALI TR|Pfirsiche TR|🍑
+SCH ÜZÜM BEYA|Trauben weiß Schale|🍇
+SCH ÜZÜM SIYA|Trauben schwarz Schale|🍇
+SCHALE ERIK|Pflaumen Schale|🟣
+SCH SEFTALI|Pfirsiche Schale|🍑
+SCH NEKTARI|Nektarinen Schale|🍑
+SCH ARMUT|Birnen Schale|🍐
+SCH KAKI|Kaki Schale|🟠
+SCH KAYSI SAR|Aprikosen gelb Schale|🍑
+SCH KIWI|Kiwi Schale|🥝
+SCH ZWETSCH|Zwetschgen Schale|🟣
+SCH KAKTUS|Kaktusfeigen Schale|🌵
+SCH YENIDÜNYA|Wollmispeln Schale|🟡
+GRAPEFRUIT|Grapefruit|🍊
+GRAPEFRUIT BEU|Grapefruit Beutel|🍊
+YENI DÜNYA|Wollmispeln|🟡
+CAGLA TR|Grüne Mandeln TR|🌰
+FINDIK|Haselnüsse|🌰
+CEVIZ|Walnüsse|🌰
+BANANE|Bananen|🍌
+MINI BANANE|Minibananen|🍌
+SAUER KIRSCHE|Sauerkirschen|🍒
+HIMBEEREN|Himbeeren|🫐
+BLAUBEEREN|Blaubeeren|🫐
+BROMBEEREN|Brombeeren|🫐
+OKRA|Okra|🫛
+PALETTE KAKI|Kaki Palette|🟠|Palette
+PALETTE KAVUN GALYA|Galiamelonen Palette|🍈|Palette
+PALETTE KAV YESIL BOX|Melonen grün Box Palette|🍈|Palette
+PALETTE KARPUZ BOX|Wassermelonen Box Palette|🍉|Palette
+PALETTE KARP CEK BOX|Wassermelonen kernlos Palette|🍉|Palette
+PALETTE MANDALIN TR|Mandarinen TR Palette|🍊|Palette
+PALETTE MANDALIN|Mandarinen Palette|🍊|Palette
+PALETTE MANDALN DAL|Mandarinen mit Blatt Palette|🍊|Palette
+PALETTE MANDAL BEU|Mandarinen Beutel Palette|🍊|Palette
+PALETTE PORTAKAL BEU|Orangen Beutel Palette|🍊|Palette
+PALETTE NAR TR|Granatäpfel TR Palette|🔴|Palette
+PALETTE SULTANAS|Trauben Sultana Palette|🍇|Palette
+PALETTE SATSUMAS TR|Satsumas TR Palette|🍊|Palette
+FEIGEN|Feigen|🟣
+FEIGEN SCHALE|Feigen Schale|🟣
+PAPAYA|Papaya|🥭
+MANGO FLUG|Mango Flugware|🥭
+MANGO PAKIS|Mango Pakistan|🥭
+HURMA TAZE|Datteln frisch|🟤
+PTAHAYA|Pitahaya|🐉
+PASION FRUCH|Passionsfrucht|🟣
+ARMUT DAG|Bergbirnen|🍐`};
+
+
+const ITEMS = {}; const BY = {g:[],o:[]};
+for (const c of ['g','o']) DATA[c].trim().split('\n').forEach((l,i)=>{
+  const [code,name,em,unit] = l.split('|'); const id = c+i;
+  ITEMS[id] = {id,c,code,name,em,pal:unit==='Palette'}; BY[c].push(id);
+});
+const unitOf = (id,n) => ITEMS[id].pal ? 'palet' : 'kasa';
+const KEY = 'meydan-v3';
+let S = {tab:'g', view:'liste', filter:'hepsi', st:{}};
+try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.st) S = Object.assign(S, s); } catch(e){}
+try { localStorage.removeItem('meydan-bestellung-v1'); localStorage.removeItem('meydan-bestellung-v2'); } catch(e){}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
+const $ = s => document.querySelector(s);
+const main = $('#main');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today = () => new Date().toLocaleDateString('tr-TR',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+$('#date').textContent = today();
+let search = '';
+function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),1600); }
+const counts = c => { let v=0,o=0; BY[c].forEach(id=>{ const x=S.st[id]; if(x) x.s==='var'?v++:o++; }); return {v,o,p:BY[c].length-v-o}; };
+
+function render(){
+  document.body.classList.toggle('obst', S.tab==='o');
+  $('#tab-g').setAttribute('aria-pressed', S.tab==='g'); $('#tab-o').setAttribute('aria-pressed', S.tab==='o');
+  $('#st-liste').setAttribute('aria-current', S.view==='liste'); $('#st-ozet').setAttribute('aria-current', S.view==='ozet');
+  S.view==='liste' ? renderList() : renderRes();
+}
+
+/* ---------- Liste ---------- */
+function renderList(){
+  main.innerHTML = `
+    <div class="tools"><input id="q" type="search" placeholder="Ürün ara" value="${esc(search)}" aria-label="Ürün ara"></div>
+    <div class="stats" id="stats"></div>
+    <p class="hint"><span class="l">← Sola: sipariş ver</span><span>Dokun: +1</span><span class="r">Sağa: elimizde var →</span></p>
+    <div class="list" id="list"></div>`;
+  fillList();
+  $('#q').oninput = e => { search = e.target.value; fillList(); };
+  bindList($('#list'));
+}
+function statsHTML(){ const k=counts(S.tab);
+  const ch=(f,label,n,cls='')=>`<button class="chip ${cls}" data-f="${f}" aria-pressed="${S.filter===f}">${label} <b>${n}</b></button>`;
+  return ch('hepsi','Hepsi',BY[S.tab].length)+ch('bekleyen','Bekleyen',k.p)+ch('var','Var',k.v,'v')+ch('sip','Sipariş',k.o,'o'); }
+function rowHTML(id){ const it=ITEMS[id], x=S.st[id];
+  return `<div class="row ${x?x.s:''}" data-id="${id}"><div class="bg"><span class="l">✓ VAR</span><span class="r">SİPARİŞ ✗</span></div>
+    <div class="fg" tabindex="0" aria-label="${esc(it.name)}${x?', '+x.n+' '+unitOf(id)+(x.s==='var'?' var':' sipariş'):''}">
+      <span class="em">${it.em}</span><span class="nm">${esc(it.name)}<small>${esc(it.code)}</small></span>
+      <span class="side">${x?`<span class="badge"><b>${x.n}</b><span>${unitOf(id)} ${x.s==='var'?'var':'sipariş'}</span></span><button class="minus" data-minus aria-label="Bir azalt">−</button>`:''}</span>
+    </div></div>`; }
+function fillList(){
+  const q=search.toLowerCase().trim();
+  const ids=BY[S.tab].filter(id=>{ const x=S.st[id];
+    if(S.filter==='bekleyen'&&x) return false; if(S.filter==='var'&&x?.s!=='var') return false; if(S.filter==='sip'&&x?.s!=='sip') return false;
+    return !q||(ITEMS[id].name+' '+ITEMS[id].code).toLowerCase().includes(q); });
+  $('#stats').innerHTML=statsHTML();
+  $('#stats').onclick=e=>{ const b=e.target.closest('.chip'); if(!b) return; S.filter=b.dataset.f; save(); fillList(); };
+  $('#list').innerHTML = ids.length ? ids.map(rowHTML).join('') : `<div class="empty"><div><strong>Ürün yok</strong>Bu filtrede gösterilecek ürün bulunmuyor.</div></div>`;
+}
+function refreshRow(id, bump){
+  const r=document.querySelector(`.row[data-id="${id}"]`); if(r){ r.outerHTML=rowHTML(id);
+    if(bump){ const b=document.querySelector(`.row[data-id="${id}"] .badge`); if(b) b.classList.add('bump'); } }
+  const st=$('#stats'); if(st) st.innerHTML=statsHTML(); save();
+}
+function setState(id,s){ const x=S.st[id]; if(!x||x.s!==s) S.st[id]={s,n:1}; refreshRow(id,true);
+  toast(`${ITEMS[id].name}: ${s==='var'?'elimizde var':'sipariş verilecek'}`); }
+function tap(id){ const x=S.st[id]; if(!x){ toast('Önce sağa veya sola kaydır'); return; } x.n++; refreshRow(id,true); }
+function minus(id){ const x=S.st[id]; if(!x) return; x.n--; if(x.n<=0) delete S.st[id]; refreshRow(id); }
+
+function bindList(list){
+  let g=null; const TH=70;
+  list.addEventListener('pointerdown', e=>{
+    if(e.button>0) return; const fg=e.target.closest('.fg'); if(!fg) return;
+    if(e.target.closest('[data-minus]')){ g={minus:true,fg}; return; }
+    g={fg,row:fg.parentElement,x:e.clientX,y:e.clientY,dx:0,sw:false,dead:false,pid:e.pointerId};
+  });
+  list.addEventListener('pointermove', e=>{
+    if(!g||g.minus||g.dead) return; const dx=e.clientX-g.x, dy=e.clientY-g.y;
+    if(!g.sw){ if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){ g.dead=true; return; }
+      if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){ g.sw=true; g.fg.classList.add('drag'); try{g.fg.setPointerCapture(g.pid);}catch(_){} } else return; }
+    g.dx=dx; g.fg.style.transform=`translateX(${dx}px)`;
+    g.row.classList.toggle('sw-r',dx>0); g.row.classList.toggle('sw-l',dx<0);
+  });
+  const end=e=>{ if(!g) return; const s=g; g=null;
+    if(s.minus){ if(e.type==='pointerup'&&e.target.closest('[data-minus]')) minus(s.fg.parentElement.dataset.id); return; }
+    const id=s.row.dataset.id;
+    if(s.sw){ s.fg.classList.remove('drag');
+      if(s.dx>TH){ s.fg.style.transform='translateX(110%)'; setTimeout(()=>setState(id,'var'),160); }
+      else if(s.dx<-TH){ s.fg.style.transform='translateX(-110%)'; setTimeout(()=>setState(id,'sip'),160); }
+      else { s.fg.style.transform=''; setTimeout(()=>s.row.classList.remove('sw-r','sw-l'),200); }
+      return; }
+    if(!s.dead&&e.type==='pointerup') tap(id);
+  };
+  list.addEventListener('pointerup',end); list.addEventListener('pointercancel',end);
+  list.addEventListener('keydown',e=>{ const fg=e.target.closest('.fg'); if(!fg||e.target!==fg) return; const id=fg.parentElement.dataset.id;
+    if(e.key==='ArrowRight'){ e.preventDefault(); setState(id,'var'); } else if(e.key==='ArrowLeft'){ e.preventDefault(); setState(id,'sip'); }
+    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tap(id); } else if(e.key==='Backspace'||e.key==='-'){ e.preventDefault(); minus(id); }
+    else return; const n=document.querySelector(`.row[data-id="${id}"] .fg`); if(n) n.focus(); });
+}
+
+/* ---------- Özet ---------- */
+const groups = c => ({sip:BY[c].filter(id=>S.st[id]?.s==='sip'), var:BY[c].filter(id=>S.st[id]?.s==='var')});
+const total = ids => ids.reduce((a,id)=>a+S.st[id].n,0);
+function renderRes(){
+  const nm={g:'Sebze',o:'Meyve'};
+  const sec=c=>{ const G=groups(c); if(!G.sip.length&&!G.var.length) return '';
+    const row=(id,k)=>`<div class="ritem ${k}"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q">${S.st[id].n} ${unitOf(id)}</span></div>`;
+    return `<section><h3 class="o">${nm[c]} · sipariş verilecek<span>${G.sip.length} ürün · ${total(G.sip)}</span></h3>${G.sip.map(id=>row(id,'o')).join('')||'<p class="hint">Yok</p>'}</section>
+      <section><h3 class="v">${nm[c]} · elimizde var<span>${G.var.length} ürün · ${total(G.var)}</span></h3>${G.var.map(id=>row(id,'v')).join('')||'<p class="hint">Yok</p>'}</section>`; };
+  const body=(S.tab==='g'?['g','o']:['o','g']).map(sec).join('');
+  main.innerHTML=`<div class="res">
+    <div class="resbar"><button class="btn primary" id="pdf">PDF indir</button><button class="btn" id="copy">Metni kopyala</button><button class="btn" id="reset">Yeni gün</button></div>
+    <div id="copyBox"></div>
+    ${body||'<div class="empty"><div><strong>Henüz kayıt yok</strong>Ürün listesinde ürünleri sağa veya sola kaydır.</div></div>'}</div>`;
+  $('#pdf').onclick=savePdf;
+  $('#copy').onclick=()=>{ const t=text(); const fb=()=>{ $('#copyBox').innerHTML='<textarea class="copy" id="ta" readonly></textarea>'; $('#ta').value=t; $('#ta').select(); toast('Metin seçildi, şimdi kopyala'); };
+    try{ navigator.clipboard.writeText(t).then(()=>toast('Kopyalandı'),fb); }catch(e){ fb(); } };
+  const rb=$('#reset'); rb.onclick=()=>{ if(rb.dataset.arm){ S.st={}; S.view='liste'; S.filter='hepsi'; save(); render(); toast('Yeni gün başladı'); }
+    else { rb.dataset.arm=1; rb.textContent='Emin misin? Tekrar bas'; setTimeout(()=>{ if(rb.isConnected){ delete rb.dataset.arm; rb.textContent='Yeni gün'; } },3000); } };
+}
+function text(){ let t=`MEYDAN MARKT GMBH – SİPARİŞ ${today()}\n`;
+  for(const c of ['g','o']){ const G=groups(c); if(!G.sip.length&&!G.var.length) continue;
+    t+=`\n${c==='g'?'SEBZE':'MEYVE'}\nSipariş verilecek:\n`; G.sip.forEach(id=>t+=`• ${ITEMS[id].name} – ${S.st[id].n} ${unitOf(id)}\n`); if(!G.sip.length) t+='—\n';
+    t+=`Elimizde var:\n`; G.var.forEach(id=>t+=`• ${ITEMS[id].name} – ${S.st[id].n} ${unitOf(id)}\n`); if(!G.var.length) t+='—\n'; }
+  return t; }
+const A = s => String(s).replace(/ş/g,'s').replace(/Ş/g,'S').replace(/ğ/g,'g').replace(/Ğ/g,'G').replace(/ı/g,'i').replace(/İ/g,'I');
+async function savePdf(){
+  const btn=$('#pdf'); if(!['g','o'].some(c=>{const G=groups(c);return G.sip.length||G.var.length;})){ toast('Henüz kayıt yok'); return; }
+  if(!window.jspdf){ toast('PDF modülü yükleniyor, tekrar dene'); return; }
+  btn.disabled=true; btn.textContent='Hazırlanıyor…';
+  try{
+    const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'}); const W=210,M=16; let y=20;
+    const page=()=>{ if(y>278){ doc.addPage(); y=20; } };
+    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text('MEYDAN MARKT GMBH - SIPARIS',M,y);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(90);
+    doc.text(A(new Date().toLocaleString('tr-TR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})),M,y+6);
+    doc.setTextColor(0); y+=14;
+    const table=(ids,title,rgb)=>{ if(!ids.length) return; page();
+      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...rgb); doc.text(A(`${title} (${ids.length} ürün · ${total(ids)} adet)`),M,y); doc.setTextColor(0); y+=5;
+      doc.setFontSize(8); doc.setTextColor(110); doc.text('URUN',M+1,y); doc.text('KOD',M+100,y); doc.text('MIKTAR',W-M-1,y,{align:'right'}); doc.setTextColor(0); y+=1;
+      ids.forEach((id,i)=>{ y+=6; page(); if(i%2===0){ doc.setFillColor(243,245,242); doc.rect(M,y-4.3,W-2*M,6,'F'); }
+        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.text(ITEMS[id].name,M+1,y);
+        doc.setFontSize(8); doc.setTextColor(110); doc.text(ITEMS[id].code,M+100,y); doc.setTextColor(0);
+        doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(`${S.st[id].n} ${unitOf(id)}`,W-M-1,y,{align:'right'}); });
+      y+=9; };
+    for(const c of ['g','o']){ const G=groups(c); if(!G.sip.length&&!G.var.length) continue;
+      y+=2; page(); const rgb=c==='g'?[46,122,58]:[201,88,26]; doc.setFillColor(...rgb); doc.rect(M,y-5,W-2*M,8,'F');
+      doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(c==='g'?'SEBZE (GEMÜSE)':'MEYVE (OBST)',M+2,y); doc.setTextColor(0); y+=10;
+      table(G.sip,'Siparis verilecek',[194,65,12]); table(G.var,'Elimizde var',[30,135,72]); }
+    const n=doc.getNumberOfPages(); for(let i=1;i<=n;i++){ doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(140); doc.text(`Sayfa ${i} / ${n}`,W-M,290,{align:'right'}); }
+    const d=new Date(), f=`Meydan_Siparis_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.pdf`;
+    const blob=doc.output('blob');
+    const download=()=>{ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=f; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000); toast('PDF indirildi'); };
+    let file=null; try{ file=new File([blob],f,{type:'application/pdf'}); }catch(_){}
+    if(file && navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file],title:f}); toast('PDF hazır'); }
+      catch(e){ if(e&&e.name==='AbortError') toast('İptal edildi'); else download(); }
+    } else download();
+  }catch(e){ toast('PDF oluşturulamadı'); }
+  finally{ if(btn.isConnected){ btn.disabled=false; btn.textContent='PDF indir'; } }
+}
+document.querySelector('.seg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.tab=b.dataset.tab; search=''; save(); render(); };
+document.querySelector('.steps').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); };
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+
+</body>
+</html>
