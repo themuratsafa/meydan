@@ -43,7 +43,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
   padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
 body.obst{--acc:var(--fruit);--acc-soft:var(--fruit-soft)}
 .app{max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column;gap:7px;padding-block:6px}
-header{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.logo{display:block;height:42px;width:auto;background:#fff;border-radius:9px;padding:3px 8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.banner{display:block;width:100%;max-width:230px;height:auto;margin:0 auto;border-radius:10px;box-shadow:0 1px 4px rgb(0 0 0/.12)}
 h1{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.02em;margin:0;text-transform:uppercase}
 .date{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
 .seg{display:grid;grid-template-columns:1fr 1fr;background:var(--sunk);border-radius:10px;padding:3px;gap:3px}
@@ -119,7 +122,7 @@ textarea.copy{width:100%;height:150px;font:12px ui-monospace,monospace;backgroun
 </head>
 <body>
 <div class="app">
-  <header><h1>Meydan Markt</h1><span class="date" id="date"></span></header>
+  <header><h1><img class="logo" src="logo-oval.png" alt="" width="88" height="42"><span class="sr">Meydan Markt</span></h1><span class="date" id="date"></span></header>
   <div class="seg" role="group" aria-label="Bölüm">
     <button id="tab-g" data-tab="g">Sebze</button>
     <button id="tab-o" data-tab="o">Meyve</button>
@@ -486,6 +489,7 @@ function renderRes(){
     return `<section><h3>${nm[c]}<span>${tot}</span></h3>${head}${ids.map(row).join('')}</section>`; };
   const body=(S.tab==='g'?['g','o']:['o','g']).map(sec).join('');
   main.innerHTML=`<div class="res">
+    <img class="banner" src="logo-banner.jpg" alt="Meydan Markt – Hermannstal 103, 22119 Hamburg – Tel 040 / 639 46 427">
     <div class="seg small" role="group" aria-label="Liste türü">
       <button id="rm-tam" data-m="tam" aria-pressed="${mode==='tam'}">Tüm liste</button>
       <button id="rm-sip" data-m="sip" aria-pressed="${mode==='sip'}">Sipariş verilecek</button></div>
@@ -514,10 +518,16 @@ async function savePdf(){
   try{
     const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'}); const W=210,M=16; let y=20;
     const page=()=>{ if(y>278){ doc.addPage(); y=20; } };
-    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(sip?'MEYDAN MARKT GMBH - SIPARIS LISTESI':'MEYDAN MARKT GMBH - STOK VE SIPARIS',M,y);
+    let top=12, logoOk=false;
+    try{ const blob=await fetch('logo-banner.jpg').then(r=>{ if(!r.ok) throw 0; return r.blob(); });
+      const url=await new Promise((res,rej)=>{ const fr=new FileReader(); fr.onload=()=>res(fr.result); fr.onerror=rej; fr.readAsDataURL(blob); });
+      doc.addImage(url,'JPEG',M,top,52,36.8); logoOk=true; }catch(_){}
+    const tx=logoOk?M+58:M; y=logoOk?top+15:20;
+    doc.setFont('helvetica','bold'); doc.setFontSize(logoOk?15:18); doc.text(sip?'SIPARIS LISTESI':'STOK VE SIPARIS',tx,y);
+    doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text('MEYDAN MARKT GMBH',tx,y-6.5);
     doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(90);
-    doc.text(A(new Date().toLocaleString('tr-TR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})),M,y+6);
-    doc.setTextColor(0); y+=14;
+    doc.text(A(new Date().toLocaleString('tr-TR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})),tx,y+6);
+    doc.setTextColor(0); y = logoOk ? top+36.8+9 : y+14;
     const cV=W-M-32, cO=W-M-1;
     for(const c of ['g','o']){ const ids=rowsFor(c,S.rmode); if(!ids.length) continue;
       y+=2; page(); const rgb=c==='g'?[46,122,58]:[201,88,26]; doc.setFillColor(...rgb); doc.rect(M,y-5,W-2*M,8,'F');
