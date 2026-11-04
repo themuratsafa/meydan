@@ -1,5 +1,5 @@
 // Sürüm numarasını her güncellemede artır: telefonlar yeni dosyaları böyle alır.
-const CACHE = 'meydan-v1';
+const CACHE = 'meydan-v2';
 const JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
 const FILES = ['./', 'index.html', 'manifest.webmanifest',
   'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'apple-touch-icon.png', 'favicon.png'];

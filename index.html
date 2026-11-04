@@ -80,26 +80,33 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .fg.drag{transition:none}
 .row.var .fg{border-color:var(--yes);box-shadow:inset 4px 0 0 var(--yes)}
 .row.sip .fg{border-color:var(--ord);box-shadow:inset -4px 0 0 var(--ord)}
+.row.var.sip .fg{border-color:var(--line);box-shadow:inset 4px 0 0 var(--yes),inset -4px 0 0 var(--ord)}
 .em{font-size:20px;text-align:center}
 .nm{font-weight:600;line-height:1.15;min-width:0;font-size:14px}
 .nm small{display:block;color:var(--muted);font-weight:400;font-size:10px;letter-spacing:.04em}
 .side{display:flex;align-items:center;gap:6px}
-.badge{min-width:62px;text-align:center;border-radius:8px;padding:3px 7px;line-height:1.05}
+.bwrap{display:flex;align-items:center;gap:3px}
+.badge{min-width:58px;text-align:center;border-radius:8px;padding:3px 6px;line-height:1.05;border:0;cursor:pointer;font-family:var(--body)}
 .badge b{display:block;font:800 18px var(--display);font-variant-numeric:tabular-nums}
-.badge span{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-.row.var .badge{background:var(--yes-soft);color:var(--yes)}
-.row.sip .badge{background:var(--ord-soft);color:var(--ord)}
-.minus{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:18px;cursor:pointer;flex:none}
+.badge span{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;white-space:nowrap}
+.badge.v{background:var(--yes-soft);color:var(--yes)}
+.badge.o{background:var(--ord-soft);color:var(--ord)}
+.minus{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:15px;line-height:1;cursor:pointer;flex:none;padding:0}
+@media (max-width:380px){.badge{min-width:50px}.badge span{font-size:8px}.minus{width:22px;height:22px}}
 .empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:24px}
 .empty strong{display:block;font-family:var(--display);font-size:22px;color:var(--ink);margin-bottom:4px}
 .res{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-bottom:16px}
 .res h3{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 5px;display:flex;justify-content:space-between}
-.res h3 span{color:var(--muted);font-variant-numeric:tabular-nums}
+.res h3 span{color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
 .res h3.o{color:var(--ord)}.res h3.v{color:var(--yes)}
-.ritem{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:6px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line);margin-bottom:4px;font-size:14px}
-.ritem .q{font-weight:700;font-variant-numeric:tabular-nums}
-.ritem.o{border-left:4px solid var(--ord)}.ritem.o .q{color:var(--ord)}
-.ritem.v{border-left:4px solid var(--yes)}.ritem.v .q{color:var(--yes)}
+.th,.ritem{display:grid;grid-template-columns:26px 1fr 84px;gap:8px;align-items:center}
+.th.three,.ritem.three{grid-template-columns:26px 1fr 70px 70px}
+.th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 8px 4px}
+.th .v,.th .o{text-align:right}.th .v{color:var(--yes)}.th .o{color:var(--ord)}
+.ritem{padding:6px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line);margin-bottom:4px;font-size:14px}
+.ritem .q{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.ritem .q.v{color:var(--yes)}.ritem .q.o{color:var(--ord)}
+.seg.small button{font-size:14px;padding:6px}
 .resbar{display:flex;gap:6px;flex-wrap:wrap}.resbar .btn{flex:1}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
   padding:9px 14px;border-radius:10px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;z-index:5;white-space:nowrap}
@@ -360,10 +367,13 @@ for (const c of ['g','o']) DATA[c].trim().split('\n').forEach((l,i)=>{
   const [code,name,em,unit] = l.split('|'); const id = c+i;
   ITEMS[id] = {id,c,code,name,em,pal:unit==='Palette'}; BY[c].push(id);
 });
-const unitOf = (id,n) => ITEMS[id].pal ? 'palet' : 'kasa';
+const unitOf = id => ITEMS[id].pal ? 'palet' : 'kasa';
 const KEY = 'meydan-v3';
-let S = {tab:'g', view:'liste', filter:'hepsi', st:{}};
+let S = {tab:'g', view:'liste', filter:'hepsi', rmode:'tam', st:{}, last:{}};
 try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.st) S = Object.assign(S, s); } catch(e){}
+// eski kayıt biçimini ({s,n}) yeni biçime ({v,o}) çevir
+for (const k in S.st) { const x=S.st[k]; if (x && x.s) { S.st[k] = x.s==='var' ? {v:x.n,o:0} : {v:0,o:x.n}; S.last[k] = x.s==='var'?'v':'o'; } }
+if (!S.last) S.last = {};
 try { localStorage.removeItem('meydan-bestellung-v1'); localStorage.removeItem('meydan-bestellung-v2'); } catch(e){}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} };
 const $ = s => document.querySelector(s);
@@ -373,7 +383,8 @@ const today = () => new Date().toLocaleDateString('tr-TR',{weekday:'short',day:'
 $('#date').textContent = today();
 let search = '';
 function toast(t){ const el=$('#toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'),1600); }
-const counts = c => { let v=0,o=0; BY[c].forEach(id=>{ const x=S.st[id]; if(x) x.s==='var'?v++:o++; }); return {v,o,p:BY[c].length-v-o}; };
+const V = id => S.st[id]?.v || 0, O = id => S.st[id]?.o || 0;
+const counts = c => { let v=0,o=0,p=0; BY[c].forEach(id=>{ if(V(id)) v++; if(O(id)) o++; if(!V(id)&&!O(id)) p++; }); return {v,o,p}; };
 
 function render(){
   document.body.classList.toggle('obst', S.tab==='o');
@@ -387,7 +398,7 @@ function renderList(){
   main.innerHTML = `
     <div class="tools"><input id="q" type="search" placeholder="Ürün ara" value="${esc(search)}" aria-label="Ürün ara"></div>
     <div class="stats" id="stats"></div>
-    <p class="hint"><span class="l">← Sola: sipariş ver</span><span>Dokun: +1</span><span class="r">Sağa: elimizde var →</span></p>
+    <p class="hint"><span class="l">← Sola: sipariş</span><span>Kutuya dokun: +1</span><span class="r">Sağa: var →</span></p>
     <div class="list" id="list"></div>`;
   fillList();
   $('#q').oninput = e => { search = e.target.value; fillList(); };
@@ -396,113 +407,136 @@ function renderList(){
 function statsHTML(){ const k=counts(S.tab);
   const ch=(f,label,n,cls='')=>`<button class="chip ${cls}" data-f="${f}" aria-pressed="${S.filter===f}">${label} <b>${n}</b></button>`;
   return ch('hepsi','Hepsi',BY[S.tab].length)+ch('bekleyen','Bekleyen',k.p)+ch('var','Var',k.v,'v')+ch('sip','Sipariş',k.o,'o'); }
-function rowHTML(id){ const it=ITEMS[id], x=S.st[id];
-  return `<div class="row ${x?x.s:''}" data-id="${id}"><div class="bg"><span class="l">✓ VAR</span><span class="r">SİPARİŞ ✗</span></div>
-    <div class="fg" tabindex="0" aria-label="${esc(it.name)}${x?', '+x.n+' '+unitOf(id)+(x.s==='var'?' var':' sipariş'):''}">
+function badge(id,k){ const n=k==='v'?V(id):O(id); if(!n) return '';
+  return `<span class="bwrap ${k}"><button class="minus" data-minus="${k}" aria-label="${k==='v'?'Var':'Sipariş'} bir azalt">−</button>
+    <button class="badge ${k}" data-inc="${k}" aria-label="${k==='v'?'Var':'Sipariş'} bir artır"><b>${n}</b><span>${unitOf(id)} ${k==='v'?'var':'sipariş'}</span></button></span>`; }
+function rowHTML(id){ const it=ITEMS[id], v=V(id), o=O(id);
+  return `<div class="row ${v?'var':''} ${o?'sip':''}" data-id="${id}"><div class="bg"><span class="l">✓ VAR</span><span class="r">SİPARİŞ ✗</span></div>
+    <div class="fg" tabindex="0" aria-label="${esc(it.name)}${v?', '+v+' '+unitOf(id)+' var':''}${o?', '+o+' '+unitOf(id)+' sipariş':''}">
       <span class="em">${it.em}</span><span class="nm">${esc(it.name)}<small>${esc(it.code)}</small></span>
-      <span class="side">${x?`<span class="badge"><b>${x.n}</b><span>${unitOf(id)} ${x.s==='var'?'var':'sipariş'}</span></span><button class="minus" data-minus aria-label="Bir azalt">−</button>`:''}</span>
+      <span class="side">${badge(id,'v')}${badge(id,'o')}</span>
     </div></div>`; }
 function fillList(){
   const q=search.toLowerCase().trim();
-  const ids=BY[S.tab].filter(id=>{ const x=S.st[id];
-    if(S.filter==='bekleyen'&&x) return false; if(S.filter==='var'&&x?.s!=='var') return false; if(S.filter==='sip'&&x?.s!=='sip') return false;
+  const ids=BY[S.tab].filter(id=>{
+    if(S.filter==='bekleyen'&&(V(id)||O(id))) return false; if(S.filter==='var'&&!V(id)) return false; if(S.filter==='sip'&&!O(id)) return false;
     return !q||(ITEMS[id].name+' '+ITEMS[id].code).toLowerCase().includes(q); });
   $('#stats').innerHTML=statsHTML();
   $('#stats').onclick=e=>{ const b=e.target.closest('.chip'); if(!b) return; S.filter=b.dataset.f; save(); fillList(); };
   $('#list').innerHTML = ids.length ? ids.map(rowHTML).join('') : `<div class="empty"><div><strong>Ürün yok</strong>Bu filtrede gösterilecek ürün bulunmuyor.</div></div>`;
 }
-function refreshRow(id, bump){
+function refreshRow(id, bumpK){
+  if(S.st[id] && !S.st[id].v && !S.st[id].o){ delete S.st[id]; delete S.last[id]; }
   const r=document.querySelector(`.row[data-id="${id}"]`); if(r){ r.outerHTML=rowHTML(id);
-    if(bump){ const b=document.querySelector(`.row[data-id="${id}"] .badge`); if(b) b.classList.add('bump'); } }
+    if(bumpK){ const b=document.querySelector(`.row[data-id="${id}"] .badge.${bumpK}`); if(b) b.classList.add('bump'); } }
   const st=$('#stats'); if(st) st.innerHTML=statsHTML(); save();
 }
-function setState(id,s){ const x=S.st[id]; if(!x||x.s!==s) S.st[id]={s,n:1}; refreshRow(id,true);
-  toast(`${ITEMS[id].name}: ${s==='var'?'elimizde var':'sipariş verilecek'}`); }
-function tap(id){ const x=S.st[id]; if(!x){ toast('Önce sağa veya sola kaydır'); return; } x.n++; refreshRow(id,true); }
-function minus(id){ const x=S.st[id]; if(!x) return; x.n--; if(x.n<=0) delete S.st[id]; refreshRow(id); }
+function add(id,k,d){ const x=S.st[id]||(S.st[id]={v:0,o:0}); x[k]=Math.max(0,(x[k]||0)+d); if(d>0) S.last[id]=k; refreshRow(id,d>0?k:null); }
+function swipe(id,k){ add(id,k,1); toast(`${ITEMS[id].name}: ${k==='v'?V(id)+' '+unitOf(id)+' var':O(id)+' '+unitOf(id)+' sipariş'}`); }
+function tap(id){ const k=S.last[id]; if(!k||!(k==='v'?V(id):O(id))){ toast('Sağa (var) veya sola (sipariş) kaydır'); return; } add(id,k,1); }
 
 function bindList(list){
   let g=null; const TH=70;
   list.addEventListener('pointerdown', e=>{
     if(e.button>0) return; const fg=e.target.closest('.fg'); if(!fg) return;
-    if(e.target.closest('[data-minus]')){ g={minus:true,fg}; return; }
+    const btn=e.target.closest('[data-minus],[data-inc]');
+    if(btn){ g={btn,fg}; return; }
     g={fg,row:fg.parentElement,x:e.clientX,y:e.clientY,dx:0,sw:false,dead:false,pid:e.pointerId};
   });
   list.addEventListener('pointermove', e=>{
-    if(!g||g.minus||g.dead) return; const dx=e.clientX-g.x, dy=e.clientY-g.y;
+    if(!g||g.btn||g.dead) return; const dx=e.clientX-g.x, dy=e.clientY-g.y;
     if(!g.sw){ if(Math.abs(dy)>10&&Math.abs(dy)>Math.abs(dx)){ g.dead=true; return; }
       if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)){ g.sw=true; g.fg.classList.add('drag'); try{g.fg.setPointerCapture(g.pid);}catch(_){} } else return; }
     g.dx=dx; g.fg.style.transform=`translateX(${dx}px)`;
     g.row.classList.toggle('sw-r',dx>0); g.row.classList.toggle('sw-l',dx<0);
   });
   const end=e=>{ if(!g) return; const s=g; g=null;
-    if(s.minus){ if(e.type==='pointerup'&&e.target.closest('[data-minus]')) minus(s.fg.parentElement.dataset.id); return; }
+    if(s.btn){ if(e.type==='pointerup'&&e.target.closest('[data-minus],[data-inc]')===s.btn){ const id=s.fg.parentElement.dataset.id;
+        if(s.btn.dataset.minus) add(id,s.btn.dataset.minus,-1); else add(id,s.btn.dataset.inc,1); } return; }
     const id=s.row.dataset.id;
     if(s.sw){ s.fg.classList.remove('drag');
-      if(s.dx>TH){ s.fg.style.transform='translateX(110%)'; setTimeout(()=>setState(id,'var'),160); }
-      else if(s.dx<-TH){ s.fg.style.transform='translateX(-110%)'; setTimeout(()=>setState(id,'sip'),160); }
+      if(s.dx>TH){ s.fg.style.transform='translateX(110%)'; setTimeout(()=>swipe(id,'v'),160); }
+      else if(s.dx<-TH){ s.fg.style.transform='translateX(-110%)'; setTimeout(()=>swipe(id,'o'),160); }
       else { s.fg.style.transform=''; setTimeout(()=>s.row.classList.remove('sw-r','sw-l'),200); }
       return; }
     if(!s.dead&&e.type==='pointerup') tap(id);
   };
   list.addEventListener('pointerup',end); list.addEventListener('pointercancel',end);
   list.addEventListener('keydown',e=>{ const fg=e.target.closest('.fg'); if(!fg||e.target!==fg) return; const id=fg.parentElement.dataset.id;
-    if(e.key==='ArrowRight'){ e.preventDefault(); setState(id,'var'); } else if(e.key==='ArrowLeft'){ e.preventDefault(); setState(id,'sip'); }
-    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tap(id); } else if(e.key==='Backspace'||e.key==='-'){ e.preventDefault(); minus(id); }
+    if(e.key==='ArrowRight'){ e.preventDefault(); swipe(id,'v'); } else if(e.key==='ArrowLeft'){ e.preventDefault(); swipe(id,'o'); }
+    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); tap(id); }
     else return; const n=document.querySelector(`.row[data-id="${id}"] .fg`); if(n) n.focus(); });
 }
 
 /* ---------- Özet ---------- */
-const groups = c => ({sip:BY[c].filter(id=>S.st[id]?.s==='sip'), var:BY[c].filter(id=>S.st[id]?.s==='var')});
-const total = ids => ids.reduce((a,id)=>a+S.st[id].n,0);
+const nm={g:'Sebze',o:'Meyve'};
+const rowsFor = (c,mode) => BY[c].filter(id => mode==='sip' ? O(id) : (V(id)||O(id)));
+const sum = (ids,f) => ids.reduce((a,id)=>a+f(id),0);
 function renderRes(){
-  const nm={g:'Sebze',o:'Meyve'};
-  const sec=c=>{ const G=groups(c); if(!G.sip.length&&!G.var.length) return '';
-    const row=(id,k)=>`<div class="ritem ${k}"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q">${S.st[id].n} ${unitOf(id)}</span></div>`;
-    return `<section><h3 class="o">${nm[c]} · sipariş verilecek<span>${G.sip.length} ürün · ${total(G.sip)}</span></h3>${G.sip.map(id=>row(id,'o')).join('')||'<p class="hint">Yok</p>'}</section>
-      <section><h3 class="v">${nm[c]} · elimizde var<span>${G.var.length} ürün · ${total(G.var)}</span></h3>${G.var.map(id=>row(id,'v')).join('')||'<p class="hint">Yok</p>'}</section>`; };
+  const mode=S.rmode;
+  const sec=c=>{ const ids=rowsFor(c,mode); if(!ids.length) return '';
+    const head = mode==='sip'
+      ? `<div class="th"><span></span><span>Ürün</span><span class="o">Sipariş</span></div>`
+      : `<div class="th three"><span></span><span>Ürün</span><span class="v">Var</span><span class="o">Sipariş</span></div>`;
+    const row=id=>{ const u=unitOf(id);
+      return mode==='sip'
+        ? `<div class="ritem"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q o">${O(id)} ${u}</span></div>`
+        : `<div class="ritem three"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q v">${V(id)?V(id)+' '+u:'–'}</span><span class="q o">${O(id)?O(id)+' '+u:'–'}</span></div>`; };
+    const tot = mode==='sip' ? `${ids.length} ürün · ${sum(ids,O)} sipariş` : `var ${sum(ids,V)} · sipariş ${sum(ids,O)}`;
+    return `<section><h3>${nm[c]}<span>${tot}</span></h3>${head}${ids.map(row).join('')}</section>`; };
   const body=(S.tab==='g'?['g','o']:['o','g']).map(sec).join('');
   main.innerHTML=`<div class="res">
-    <div class="resbar"><button class="btn primary" id="pdf">PDF indir</button><button class="btn" id="copy">Metni kopyala</button><button class="btn" id="reset">Yeni gün</button></div>
+    <div class="seg small" role="group" aria-label="Liste türü">
+      <button id="rm-tam" data-m="tam" aria-pressed="${mode==='tam'}">Tüm liste</button>
+      <button id="rm-sip" data-m="sip" aria-pressed="${mode==='sip'}">Sipariş verilecek</button></div>
+    <div class="resbar"><button class="btn primary" id="pdf">${mode==='sip'?'Sipariş PDF':'PDF indir'}</button><button class="btn" id="copy">Metni kopyala</button><button class="btn" id="reset">Yeni gün</button></div>
     <div id="copyBox"></div>
-    ${body||'<div class="empty"><div><strong>Henüz kayıt yok</strong>Ürün listesinde ürünleri sağa veya sola kaydır.</div></div>'}</div>`;
+    ${body||`<div class="empty"><div><strong>${mode==='sip'?'Sipariş yok':'Henüz kayıt yok'}</strong>${mode==='sip'?'Ürün listesinde ürünleri sola kaydırarak sipariş ekle.':'Ürün listesinde ürünleri sağa veya sola kaydır.'}</div></div>`}</div>`;
+  main.querySelector('.seg.small').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.rmode=b.dataset.m; save(); renderRes(); };
   $('#pdf').onclick=savePdf;
   $('#copy').onclick=()=>{ const t=text(); const fb=()=>{ $('#copyBox').innerHTML='<textarea class="copy" id="ta" readonly></textarea>'; $('#ta').value=t; $('#ta').select(); toast('Metin seçildi, şimdi kopyala'); };
     try{ navigator.clipboard.writeText(t).then(()=>toast('Kopyalandı'),fb); }catch(e){ fb(); } };
-  const rb=$('#reset'); rb.onclick=()=>{ if(rb.dataset.arm){ S.st={}; S.view='liste'; S.filter='hepsi'; save(); render(); toast('Yeni gün başladı'); }
+  const rb=$('#reset'); rb.onclick=()=>{ if(rb.dataset.arm){ S.st={}; S.last={}; S.view='liste'; S.filter='hepsi'; save(); render(); toast('Yeni gün başladı'); }
     else { rb.dataset.arm=1; rb.textContent='Emin misin? Tekrar bas'; setTimeout(()=>{ if(rb.isConnected){ delete rb.dataset.arm; rb.textContent='Yeni gün'; } },3000); } };
 }
-function text(){ let t=`MEYDAN MARKT GMBH – SİPARİŞ ${today()}\n`;
-  for(const c of ['g','o']){ const G=groups(c); if(!G.sip.length&&!G.var.length) continue;
-    t+=`\n${c==='g'?'SEBZE':'MEYVE'}\nSipariş verilecek:\n`; G.sip.forEach(id=>t+=`• ${ITEMS[id].name} – ${S.st[id].n} ${unitOf(id)}\n`); if(!G.sip.length) t+='—\n';
-    t+=`Elimizde var:\n`; G.var.forEach(id=>t+=`• ${ITEMS[id].name} – ${S.st[id].n} ${unitOf(id)}\n`); if(!G.var.length) t+='—\n'; }
+function text(){ const sip=S.rmode==='sip';
+  let t=`MEYDAN MARKT GMBH – ${sip?'SİPARİŞ LİSTESİ':'STOK VE SİPARİŞ'} ${today()}\n`;
+  for(const c of ['g','o']){ const ids=rowsFor(c,S.rmode); if(!ids.length) continue;
+    t+=`\n${c==='g'?'SEBZE':'MEYVE'}\n`;
+    ids.forEach(id=>{ const u=unitOf(id); t+= sip ? `• ${ITEMS[id].name} – ${O(id)} ${u}\n` : `• ${ITEMS[id].name} – var: ${V(id)} ${u}, sipariş: ${O(id)} ${u}\n`; }); }
   return t; }
 const A = s => String(s).replace(/ş/g,'s').replace(/Ş/g,'S').replace(/ğ/g,'g').replace(/Ğ/g,'G').replace(/ı/g,'i').replace(/İ/g,'I');
 async function savePdf(){
-  const btn=$('#pdf'); if(!['g','o'].some(c=>{const G=groups(c);return G.sip.length||G.var.length;})){ toast('Henüz kayıt yok'); return; }
+  const sip=S.rmode==='sip', btn=$('#pdf'), label=btn.textContent;
+  if(!['g','o'].some(c=>rowsFor(c,S.rmode).length)){ toast(sip?'Sipariş yok':'Henüz kayıt yok'); return; }
   if(!window.jspdf){ toast('PDF modülü yükleniyor, tekrar dene'); return; }
   btn.disabled=true; btn.textContent='Hazırlanıyor…';
   try{
     const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'mm',format:'a4'}); const W=210,M=16; let y=20;
     const page=()=>{ if(y>278){ doc.addPage(); y=20; } };
-    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text('MEYDAN MARKT GMBH - SIPARIS',M,y);
+    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text(sip?'MEYDAN MARKT GMBH - SIPARIS LISTESI':'MEYDAN MARKT GMBH - STOK VE SIPARIS',M,y);
     doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(90);
     doc.text(A(new Date().toLocaleString('tr-TR',{weekday:'long',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})),M,y+6);
     doc.setTextColor(0); y+=14;
-    const table=(ids,title,rgb)=>{ if(!ids.length) return; page();
-      doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.setTextColor(...rgb); doc.text(A(`${title} (${ids.length} ürün · ${total(ids)} adet)`),M,y); doc.setTextColor(0); y+=5;
-      doc.setFontSize(8); doc.setTextColor(110); doc.text('URUN',M+1,y); doc.text('KOD',M+100,y); doc.text('MIKTAR',W-M-1,y,{align:'right'}); doc.setTextColor(0); y+=1;
-      ids.forEach((id,i)=>{ y+=6; page(); if(i%2===0){ doc.setFillColor(243,245,242); doc.rect(M,y-4.3,W-2*M,6,'F'); }
-        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.text(ITEMS[id].name,M+1,y);
-        doc.setFontSize(8); doc.setTextColor(110); doc.text(ITEMS[id].code,M+100,y); doc.setTextColor(0);
-        doc.setFont('helvetica','bold'); doc.setFontSize(11); doc.text(`${S.st[id].n} ${unitOf(id)}`,W-M-1,y,{align:'right'}); });
-      y+=9; };
-    for(const c of ['g','o']){ const G=groups(c); if(!G.sip.length&&!G.var.length) continue;
+    const cV=W-M-32, cO=W-M-1;
+    for(const c of ['g','o']){ const ids=rowsFor(c,S.rmode); if(!ids.length) continue;
       y+=2; page(); const rgb=c==='g'?[46,122,58]:[201,88,26]; doc.setFillColor(...rgb); doc.rect(M,y-5,W-2*M,8,'F');
-      doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.text(c==='g'?'SEBZE (GEMÜSE)':'MEYVE (OBST)',M+2,y); doc.setTextColor(0); y+=10;
-      table(G.sip,'Siparis verilecek',[194,65,12]); table(G.var,'Elimizde var',[30,135,72]); }
+      doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+      doc.text(c==='g'?'SEBZE (GEMÜSE)':'MEYVE (OBST)',M+2,y);
+      doc.text(A(sip?`${ids.length} ürün · ${sum(ids,O)} siparis`:`var ${sum(ids,V)} · siparis ${sum(ids,O)}`),W-M-2,y,{align:'right'});
+      doc.setTextColor(0); y+=8;
+      doc.setFontSize(8); doc.setTextColor(110); doc.text('URUN',M+1,y); doc.text('KOD',M+92,y);
+      if(!sip) doc.text('ELIMIZDE VAR',cV,y,{align:'right'}); doc.text('SIPARIS',cO,y,{align:'right'}); doc.setTextColor(0); y+=1;
+      ids.forEach((id,i)=>{ y+=6; page(); if(i%2===0){ doc.setFillColor(243,245,242); doc.rect(M,y-4.3,W-2*M,6,'F'); }
+        const u=unitOf(id);
+        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.text(ITEMS[id].name,M+1,y);
+        doc.setFontSize(8); doc.setTextColor(110); doc.text(ITEMS[id].code,M+92,y); doc.setTextColor(0);
+        doc.setFontSize(11);
+        if(!sip){ doc.setTextColor(30,135,72); doc.text(V(id)?`${V(id)} ${u}`:'-',cV,y,{align:'right'}); }
+        doc.setFont('helvetica','bold'); doc.setTextColor(194,65,12); doc.text(O(id)?`${O(id)} ${u}`:'-',cO,y,{align:'right'}); doc.setTextColor(0); });
+      y+=10; }
     const n=doc.getNumberOfPages(); for(let i=1;i<=n;i++){ doc.setPage(i); doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(140); doc.text(`Sayfa ${i} / ${n}`,W-M,290,{align:'right'}); }
-    const d=new Date(), f=`Meydan_Siparis_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.pdf`;
+    const d=new Date(), f=`Meydan_${sip?'Siparis':'Stok_Siparis'}_${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}.pdf`;
     const blob=doc.output('blob');
     const download=()=>{ const u=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=u; a.download=f; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),30000); toast('PDF indirildi'); };
     let file=null; try{ file=new File([blob],f,{type:'application/pdf'}); }catch(_){}
@@ -511,7 +545,7 @@ async function savePdf(){
       catch(e){ if(e&&e.name==='AbortError') toast('İptal edildi'); else download(); }
     } else download();
   }catch(e){ toast('PDF oluşturulamadı'); }
-  finally{ if(btn.isConnected){ btn.disabled=false; btn.textContent='PDF indir'; } }
+  finally{ if(btn.isConnected){ btn.disabled=false; btn.textContent=label; } }
 }
 document.querySelector('.seg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.tab=b.dataset.tab; search=''; save(); render(); };
 document.querySelector('.steps').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); };
