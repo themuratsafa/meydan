@@ -77,14 +77,13 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .bg .l{color:var(--yes)}.bg .r{color:var(--ord)}
 .row.sw-r .bg{background:var(--yes-soft)}.row.sw-r .bg .r{visibility:hidden}
 .row.sw-l .bg{background:var(--ord-soft)}.row.sw-l .bg .l{visibility:hidden}
-.fg{position:relative;display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:8px;padding:6px 8px;min-height:46px;
+.fg{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px;padding:6px 8px;min-height:46px;
   background:var(--surface);border:1px solid var(--line);border-radius:9px;touch-action:pan-y;user-select:none;-webkit-user-select:none;
   cursor:pointer;transition:transform .2s ease}
 .fg.drag{transition:none}
 .row.var .fg{border-color:var(--yes);box-shadow:inset 4px 0 0 var(--yes)}
 .row.sip .fg{border-color:var(--ord);box-shadow:inset -4px 0 0 var(--ord)}
 .row.var.sip .fg{border-color:var(--line);box-shadow:inset 4px 0 0 var(--yes),inset -4px 0 0 var(--ord)}
-.em{font-size:20px;text-align:center}
 .nm{font-weight:600;line-height:1.15;min-width:0;font-size:14px}
 .nm small{display:block;color:var(--muted);font-weight:400;font-size:10px;letter-spacing:.04em}
 .side{display:flex;align-items:center;gap:6px}
@@ -102,8 +101,8 @@ main{flex:1;min-height:0;display:flex;flex-direction:column}
 .res h3{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 5px;display:flex;justify-content:space-between}
 .res h3 span{color:var(--muted);font-variant-numeric:tabular-nums;font-size:13px}
 .res h3.o{color:var(--ord)}.res h3.v{color:var(--yes)}
-.th,.ritem{display:grid;grid-template-columns:26px 1fr 84px;gap:8px;align-items:center}
-.th.three,.ritem.three{grid-template-columns:26px 1fr 70px 70px}
+.th,.ritem{display:grid;grid-template-columns:1fr 84px;gap:8px;align-items:center}
+.th.three,.ritem.three{grid-template-columns:1fr 70px 70px}
 .th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 8px 4px}
 .th .v,.th .o{text-align:right}.th .v{color:var(--yes)}.th .o{color:var(--ord)}
 .ritem{padding:6px 8px;border-radius:8px;background:var(--surface);border:1px solid var(--line);margin-bottom:4px;font-size:14px}
@@ -137,238 +136,238 @@ textarea.copy{width:100%;height:150px;font:12px ui-monospace,monospace;backgroun
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const DATA = {
-g:`RÖMER SALAT|Römersalat|🥬
-RADISIEN|Radieschen|🌱|Bund
-RETICH|Rettich weiß|🥕
-RETICH SCHWARTZ|Rettich schwarz|🥔
-ROTEBEETE|Rote Bete|🟣
-ROCCULA|Rucola|🌿
-SOGAN TAZE|Frühlingszwiebeln|🌱|Bund
-SOGA NETZ 1 KG|Zwiebeln Netz 1 kg|🧅
-SOG NET KIR 1 KG|Rote Zwiebeln Netz 1 kg|🧅
-SOGAN NETZ 5 KG|Zwiebeln Netz 5 kg|🧅
-SOGA KIRM 10 KG|Rote Zwiebeln 10 kg|🧅
-SOGA GEM 25 KG|Gemüsezwiebeln 25 kg|🧅
-SALGAM|Weiße Rüben|🥔
-SPITZKOHL|Spitzkohl|🥬
-SAMIRSAK TAZE|Knoblauch frisch|🧄
-SAMIRSAK 250|Knoblauch 250 g|🧄
-SAMIRSAK 500|Knoblauch 500 g|🧄
-SUPPEN GRÜN|Suppengrün|🥕|Bund
-STAUNSELLERI|Staudensellerie|🥬
-KOPFSELERI|Knollensellerie|🥔
-KORIANDER|Koriander|🌿|Bund
-KOHLRABI|Kohlrabi|🥬
-KABAK BEYAZ|Zucchini hell|🥒
-KABAK BEYAZ SCH|Zucchini hell Schale|🥒
-KABAK YESIL|Zucchini grün|🥒
-KÜRBIS|Kürbis|🎃
-KIL SIVRI|Peperoni dünn scharf|🌶️
-LOLO ROSSO|Lollo Rosso|🥬
-LOLO BIANDO|Lollo Bianco|🥬
-LIMETTEN|Limetten|🍋‍🟩
-LIMON BEUTEL|Zitronen Beutel|🍋
-LIMON|Zitronen|🍋
-LÖWENZAHN|Löwenzahn|🌿|Bund
-LAHAN DEUTSCH|Weißkohl Deutschland|🥬
-LAHANA ROTKOHL|Rotkohl|🥬
-LAHANA TR|Weißkohl Türkei|🥬
-MAYDANOZ ITAL|Petersilie glatt|🌿|Bund
-MANGOLD|Mangold|🥬|Bund
-MANTAR FULL|Champignons voll|🍄
-MANTAR|Champignons|🍄
-MANTAR AUSTER|Austernpilze|🍄
-GURKE DÜZ|Gurken|🥒
-GURKE CITIR|Knackgurken|🥒
-GURKE TURSU|Einlegegurken|🥒
-GURKE MINI|Minigurken|🥒
-GUR MINI SCHAL|Minigurken Schale|🥒
-BEUT.PATLICAN TR|Auberginen Beutel TR|🍆
-BEUT.KAPIA|Kapia-Paprika Beutel|🫑
-BEUT.SIVRI|Spitzpaprika Beutel|🫑
-BEUT.CARLI|Charleston-Paprika Beutel|🫑
-BEUT.DOLMA|Paprika zum Füllen Beutel|🫑
-BEUT.ACI YESIL|Peperoni grün scharf Beutel|🌶️
-BEUT.ACI KIRMIZ|Peperoni rot scharf Beutel|🌶️
-BEUT ÜC BURUN|Chili Beutel (Üç Burun)|🌶️
-ACI YESIL MAROK|Peperoni grün scharf Marokko|🌶️
-ACI KIRMIZI MAR|Peperoni rot scharf Marokko|🌶️
-ACI AFK TOMBUL|Chili Afrika rund|🌶️
-ACI AFK KILL|Chili Afrika dünn|🌶️
-BLUMEN KOHL|Blumenkohl|🥦
-BAKLA TR|Dicke Bohnen TR|🫛
-BROKOLI|Brokkoli|🥦
-PAPRIKA MIX BEU|Paprika Mix Beutel|🫑
-PAPRIKA ROT BEU|Paprika rot Beutel|🫑
-PAPRIKA ROT|Paprika rot|🫑
-PAPRIKA GELB|Paprika gelb|🫑
-PAPRIKA GRÜN|Paprika grün|🫑
-PATLICAN TR TIPI|Auberginen TR-Typ|🍆
-PATLICAN SPA|Auberginen Spanien|🍆
-PATLICAN HOL|Auberginen Holland|🍆
-PIRASA DEU|Porree Deutschland|🥬
-PATATES GRIL|Grillkartoffeln|🥔
-PATATES TAZE|Frühkartoffeln|🥔
-PATATES TATLI|Süßkartoffeln|🍠
-PATATSNETZ 5 KG|Kartoffeln Netz 5 kg|🥔
-TOMATE STR|Strauchtomaten|🍅
-TOMATE LOSE|Tomaten lose|🍅
-TOMATE FLA|Flaschentomaten|🍅
-TOMATE CHR SCH|Cherrytomaten Schale|🍅
-TOMATE EIER|Eiertomaten|🍅
-TOMATE TURSUL|Tomaten zum Einlegen|🍅
-FASULYE BEUTEL|Grüne Bohnen Beutel|🫛
-FASULYE TR BEUT|Grüne Bohnen TR Beutel|🫛
-FASULYE SPA|Grüne Bohnen Spanien|🫛
-ISPANAK BUND|Spinat Bund|🥬|Bund
-HAVUC LOSE|Karotten lose|🥕
-CORNO TR BOYTE|Corno-Paprika TR|🫑
-CHERIMOYA|Cherimoya|🍈
-CHINAKOHL|Chinakohl|🥬
-DILL KASA|Dill Kiste|🌿
-NANE DEU|Minze Deutschland|🌿|Bund
-INGWER|Ingwer|🫚
-EISBERGSALAT|Eisbergsalat|🥬
-PALETTE TOMATE FL|Flaschentomaten Palette|🍅|Palette
-PALETTE TOMATE ST|Strauchtomaten Palette|🍅|Palette
-PALETTE LIMETTEN|Limetten Palette|🍋‍🟩|Palette
-PALETTE KARTOFFEL 5 KG|Kartoffeln 5 kg Palette|🥔|Palette
-PALETTE ZWIEBEL 5 KG|Zwiebeln 5 kg Palette|🧅|Palette
-HOKAIDO|Hokkaido-Kürbis|🎃
-SEMIZ OTU|Portulak|🌿|Bund
-ACUR|Acur-Gurke|🥒
-KELEK|Kelek (unreife Melone)|🍈
-RABABA|Rhabarber|🌿
-MISIR TAZE|Mais frisch|🌽
-RAPA|Stängelkohl (Rapa)|🥬
-STECKRÜBEN|Steckrüben|🥔
-SOGAN DIKME|Steckzwiebeln|🧅
-TERE BUND|Kresse Bund|🌱|Bund
-KUZU KULAGI|Sauerampfer|🌿|Bund
-EBEM GÖMECI|Malve|🌿|Bund
-ENGINAR|Artischocken|🌿
-JALEPONE LOS|Jalapeños lose|🌶️
-BARBUNYA TR|Borlotti-Bohnen TR|🫘`,
-o:`AVOCADO|Avocado|🥑
-AVOCADO HAS|Avocado Hass|🥑
-AYVA|Quitten|🍐
-ARMUT ABATA|Birnen Abate|🍐
-ARMUT FORELLE|Birnen Forelle|🍐
-ARMUT SANTAM|Birnen Santa Maria|🍐
-ARMUT WIYEMS|Birnen Williams|🍐
-ARMUT DEVECI|Birnen Deveci|🍐
-ANANAS|Ananas|🍍
-KARPUZ|Wassermelonen|🍉
-KARPUZCEKIREKSIZ|Wassermelonen kernlos|🍉
-KAVUN IRAN|Melonen Iran|🍈
-KAVUN TR|Melonen Türkei|🍈
-KAVUN GALIA|Galiamelonen|🍈
-KAVUN YESIL|Melonen grün|🍈
-KAVUN SARI|Honigmelonen gelb|🍈
-KAYSI|Aprikosen|🍑
-KAYSI SEKERPAR|Aprikosen süß|🍑
-KAKI|Kaki|🟠
-KECI BOYNUZU|Johannisbrot|🫘
-KIRAZ|Kirschen|🍒
-KIRAZ TR|Kirschen TR|🍒
-KESTANE TR|Esskastanien TR|🌰
-KOKUSNUSS|Kokosnuss|🥥
-KIWI|Kiwi|🥝
-ÜZÜM CRIMSON|Trauben Crimson|🍇
-ÜZÜM SULTANAS|Trauben Sultana|🍇
-ÜZÜM M SCHWAR|Trauben Muskat schwarz|🍇
-ÜZÜM M BEYAZ|Trauben Muskat weiß|🍇
-ÜZÜM REDGLOBE|Trauben Red Globe|🍇
-ÜZÜM CEKIRDEK|Trauben mit Kernen|🍇
-ÜZÜM SI LAVELLA|Trauben Lavella|🍇
-ERIK CAN TR|Grüne Pflaumen TR|🟢
-ERIK KIRMIZI|Pflaumen rot|🔴
-ERIK SARI|Pflaumen gelb|🟡
-ERIK ZWETSCHEN|Zwetschgen|🟣
-ELMA GOLDEN|Äpfel Golden|🍏
-ELMA ROYAL GAL|Äpfel Royal Gala|🍎
-ELMA REDD/CHIEF|Äpfel Red Chief|🍎
-ELMA GRENY|Äpfel Granny Smith|🍏
-ELMA PINKLADY|Äpfel Pink Lady|🍎
-ELMA FUSCHI|Äpfel Fuji|🍎
-ELMA FRANSIZ TAZ|Äpfel Frankreich|🍎
-ELMA WAINACH|Äpfel Weinach|🍎
-ERDBEEREN SP|Erdbeeren Spanien|🍓
-ERDBEEREN DE|Erdbeeren Deutschland|🍓
-PORTAKAL SAF|Saftorangen|🍊
-PORTAKAL|Orangen|🍊
-PORTAKAL TR|Orangen TR|🍊
-PORTAKAL KANN|Orangen Kann|🍊
-PORTAKAL BEUT|Orangen Beutel|🍊
-PORT KANN BEUT|Orangen Kann Beutel|🍊
-POMELA|Pomelo|🍈
-MANDALIN TR|Mandarinen TR|🍊
-MANDALIN|Mandarinen|🍊
-MANDAL DALI|Mandarinen mit Blatt|🍊
-MANDAL BEU|Mandarinen Beutel|🍊
-MANGO|Mango|🥭
-MUSMULA|Mispeln|🟤
-NAR|Granatäpfel|🔴
-NAR TR|Granatäpfel TR|🔴
-NAR TATLI|Granatäpfel süß|🔴
-NEKTARIN LOS|Nektarinen lose|🍑
-SHARONI|Sharonfrucht|🟠
-SATSUMAS TR|Satsumas TR|🍊
-SEFTALI|Pfirsiche|🍑
-SEFTALI TR|Pfirsiche TR|🍑
-SCH ÜZÜM BEYA|Trauben weiß Schale|🍇
-SCH ÜZÜM SIYA|Trauben schwarz Schale|🍇
-SCHALE ERIK|Pflaumen Schale|🟣
-SCH SEFTALI|Pfirsiche Schale|🍑
-SCH NEKTARI|Nektarinen Schale|🍑
-SCH ARMUT|Birnen Schale|🍐
-SCH KAKI|Kaki Schale|🟠
-SCH KAYSI SAR|Aprikosen gelb Schale|🍑
-SCH KIWI|Kiwi Schale|🥝
-SCH ZWETSCH|Zwetschgen Schale|🟣
-SCH KAKTUS|Kaktusfeigen Schale|🌵
-SCH YENIDÜNYA|Wollmispeln Schale|🟡
-GRAPEFRUIT|Grapefruit|🍊
-GRAPEFRUIT BEU|Grapefruit Beutel|🍊
-YENI DÜNYA|Wollmispeln|🟡
-CAGLA TR|Grüne Mandeln TR|🌰
-FINDIK|Haselnüsse|🌰
-CEVIZ|Walnüsse|🌰
-BANANE|Bananen|🍌
-MINI BANANE|Minibananen|🍌
-SAUER KIRSCHE|Sauerkirschen|🍒
-HIMBEEREN|Himbeeren|🫐
-BLAUBEEREN|Blaubeeren|🫐
-BROMBEEREN|Brombeeren|🫐
-OKRA|Okra|🫛
-PALETTE KAKI|Kaki Palette|🟠|Palette
-PALETTE KAVUN GALYA|Galiamelonen Palette|🍈|Palette
-PALETTE KAV YESIL BOX|Melonen grün Box Palette|🍈|Palette
-PALETTE KARPUZ BOX|Wassermelonen Box Palette|🍉|Palette
-PALETTE KARP CEK BOX|Wassermelonen kernlos Palette|🍉|Palette
-PALETTE MANDALIN TR|Mandarinen TR Palette|🍊|Palette
-PALETTE MANDALIN|Mandarinen Palette|🍊|Palette
-PALETTE MANDALN DAL|Mandarinen mit Blatt Palette|🍊|Palette
-PALETTE MANDAL BEU|Mandarinen Beutel Palette|🍊|Palette
-PALETTE PORTAKAL BEU|Orangen Beutel Palette|🍊|Palette
-PALETTE NAR TR|Granatäpfel TR Palette|🔴|Palette
-PALETTE SULTANAS|Trauben Sultana Palette|🍇|Palette
-PALETTE SATSUMAS TR|Satsumas TR Palette|🍊|Palette
-FEIGEN|Feigen|🟣
-FEIGEN SCHALE|Feigen Schale|🟣
-PAPAYA|Papaya|🥭
-MANGO FLUG|Mango Flugware|🥭
-MANGO PAKIS|Mango Pakistan|🥭
-HURMA TAZE|Datteln frisch|🟤
-PTAHAYA|Pitahaya|🐉
-PASION FRUCH|Passionsfrucht|🟣
-ARMUT DAG|Bergbirnen|🍐`};
+g:`RÖMER SALAT|Marul
+RADISIEN|Kırmızı turp
+RETICH|Beyaz turp
+RETICH SCHWARTZ|Siyah turp
+ROTEBEETE|Kırmızı pancar
+ROCCULA|Roka
+SOGAN TAZE|Taze soğan
+SOGA NETZ 1 KG|Kuru soğan file 1 kg
+SOG NET KIR 1 KG|Kırmızı soğan file 1 kg
+SOGAN NETZ 5 KG|Kuru soğan file 5 kg
+SOGA KIRM 10 KG|Kırmızı soğan 10 kg
+SOGA GEM 25 KG|İri soğan 25 kg
+SALGAM|Şalgam
+SPITZKOHL|Sivri lahana
+SAMIRSAK TAZE|Taze sarımsak
+SAMIRSAK 250|Sarımsak 250 g
+SAMIRSAK 500|Sarımsak 500 g
+SUPPEN GRÜN|Çorbalık yeşillik
+STAUNSELLERI|Sap kereviz
+KOPFSELERI|Kök kereviz
+KORIANDER|Kişniş
+KOHLRABI|Alabaş
+KABAK BEYAZ|Beyaz kabak
+KABAK BEYAZ SCH|Beyaz kabak (kap)
+KABAK YESIL|Yeşil kabak
+KÜRBIS|Bal kabağı
+KIL SIVRI|Kıl biber (acı)
+LOLO ROSSO|Kırmızı kıvırcık
+LOLO BIANDO|Yeşil kıvırcık
+LIMETTEN|Misket limonu
+LIMON BEUTEL|Limon (poşet)
+LIMON|Limon
+LÖWENZAHN|Karahindiba
+LAHAN DEUTSCH|Beyaz lahana Almanya
+LAHANA ROTKOHL|Kırmızı lahana
+LAHANA TR|Beyaz lahana TR
+MAYDANOZ ITAL|Maydanoz (düz yaprak)
+MANGOLD|Pazı
+MANTAR FULL|Mantar (full)
+MANTAR|Mantar
+MANTAR AUSTER|İstiridye mantarı
+GURKE DÜZ|Salatalık
+GURKE CITIR|Çıtır salatalık
+GURKE TURSU|Turşuluk salatalık
+GURKE MINI|Mini salatalık
+GUR MINI SCHAL|Mini salatalık (kap)
+BEUT.PATLICAN TR|Patlıcan TR (poşet)
+BEUT.KAPIA|Kapya biber (poşet)
+BEUT.SIVRI|Sivri biber (poşet)
+BEUT.CARLI|Çarliston biber (poşet)
+BEUT.DOLMA|Dolmalık biber (poşet)
+BEUT.ACI YESIL|Yeşil acı biber (poşet)
+BEUT.ACI KIRMIZ|Kırmızı acı biber (poşet)
+BEUT ÜC BURUN|Üç burun biber (poşet)
+ACI YESIL MAROK|Yeşil acı biber Fas
+ACI KIRMIZI MAR|Kırmızı acı biber Fas
+ACI AFK TOMBUL|Afrika acı biber tombul
+ACI AFK KILL|Afrika acı biber ince
+BLUMEN KOHL|Karnabahar
+BAKLA TR|Bakla TR
+BROKOLI|Brokoli
+PAPRIKA MIX BEU|Kaliforniya biber karışık (poşet)
+PAPRIKA ROT BEU|Kaliforniya biber kırmızı (poşet)
+PAPRIKA ROT|Kaliforniya biber kırmızı
+PAPRIKA GELB|Kaliforniya biber sarı
+PAPRIKA GRÜN|Kaliforniya biber yeşil
+PATLICAN TR TIPI|Patlıcan TR tipi
+PATLICAN SPA|Patlıcan İspanya
+PATLICAN HOL|Patlıcan Hollanda
+PIRASA DEU|Pırasa Almanya
+PATATES GRIL|Közlük patates
+PATATES TAZE|Taze patates
+PATATES TATLI|Tatlı patates
+PATATSNETZ 5 KG|Patates file 5 kg
+TOMATE STR|Salkım domates
+TOMATE LOSE|Domates (dökme)
+TOMATE FLA|Uzun domates
+TOMATE CHR SCH|Çeri domates (kap)
+TOMATE EIER|Yumurta domates
+TOMATE TURSUL|Turşuluk domates
+FASULYE BEUTEL|Taze fasulye (poşet)
+FASULYE TR BEUT|Taze fasulye TR (poşet)
+FASULYE SPA|Taze fasulye İspanya
+ISPANAK BUND|Ispanak (demet)
+HAVUC LOSE|Havuç (dökme)
+CORNO TR BOYTE|Corno biber TR
+CHERIMOYA|Çirimoya
+CHINAKOHL|Çin lahanası
+DILL KASA|Dereotu (kasa)
+NANE DEU|Nane Almanya
+INGWER|Zencefil
+EISBERGSALAT|Aysberg marul
+PALETTE TOMATE FL|Uzun domates (palet)|Palette
+PALETTE TOMATE ST|Salkım domates (palet)|Palette
+PALETTE LIMETTEN|Misket limonu (palet)|Palette
+PALETTE KARTOFFEL 5 KG|Patates 5 kg (palet)|Palette
+PALETTE ZWIEBEL 5 KG|Kuru soğan 5 kg (palet)|Palette
+HOKAIDO|Hokkaido kabağı
+SEMIZ OTU|Semizotu
+ACUR|Acur
+KELEK|Kelek
+RABABA|Ravent
+MISIR TAZE|Taze mısır
+RAPA|Rapa
+STECKRÜBEN|İsveç şalgamı
+SOGAN DIKME|Arpacık soğan (dikmelik)
+TERE BUND|Tere (demet)
+KUZU KULAGI|Kuzukulağı
+EBEM GÖMECI|Ebegümeci
+ENGINAR|Enginar
+JALEPONE LOS|Jalapeno biber (dökme)
+BARBUNYA TR|Barbunya TR`,
+o:`AVOCADO|Avokado
+AVOCADO HAS|Avokado Hass
+AYVA|Ayva
+ARMUT ABATA|Armut Abate
+ARMUT FORELLE|Armut Forelle
+ARMUT SANTAM|Armut Santa Maria
+ARMUT WIYEMS|Armut Williams
+ARMUT DEVECI|Deveci armut
+ANANAS|Ananas
+KARPUZ|Karpuz
+KARPUZCEKIREKSIZ|Çekirdeksiz karpuz
+KAVUN IRAN|Kavun İran
+KAVUN TR|Kavun TR
+KAVUN GALIA|Galya kavun
+KAVUN YESIL|Yeşil kavun
+KAVUN SARI|Sarı kavun
+KAYSI|Kayısı
+KAYSI SEKERPAR|Şekerpare kayısı
+KAKI|Trabzon hurması
+KECI BOYNUZU|Keçiboynuzu
+KIRAZ|Kiraz
+KIRAZ TR|Kiraz TR
+KESTANE TR|Kestane TR
+KOKUSNUSS|Hindistan cevizi
+KIWI|Kivi
+ÜZÜM CRIMSON|Üzüm Crimson
+ÜZÜM SULTANAS|Sultani üzüm
+ÜZÜM M SCHWAR|Siyah misket üzüm
+ÜZÜM M BEYAZ|Beyaz misket üzüm
+ÜZÜM REDGLOBE|Üzüm Red Globe
+ÜZÜM CEKIRDEK|Çekirdekli üzüm
+ÜZÜM SI LAVELLA|Üzüm Lavella
+ERIK CAN TR|Can erik TR
+ERIK KIRMIZI|Kırmızı erik
+ERIK SARI|Sarı erik
+ERIK ZWETSCHEN|Mürdüm erik
+ELMA GOLDEN|Elma Golden
+ELMA ROYAL GAL|Elma Royal Gala
+ELMA REDD/CHIEF|Elma Red Chief
+ELMA GRENY|Elma Granny Smith
+ELMA PINKLADY|Elma Pink Lady
+ELMA FUSCHI|Elma Fuji
+ELMA FRANSIZ TAZ|Elma Fransız taze
+ELMA WAINACH|Elma Weinach
+ERDBEEREN SP|Çilek İspanya
+ERDBEEREN DE|Çilek Almanya
+PORTAKAL SAF|Sıkmalık portakal
+PORTAKAL|Portakal
+PORTAKAL TR|Portakal TR
+PORTAKAL KANN|Portakal Kann
+PORTAKAL BEUT|Portakal (poşet)
+PORT KANN BEUT|Portakal Kann (poşet)
+POMELA|Pomelo
+MANDALIN TR|Mandalina TR
+MANDALIN|Mandalina
+MANDAL DALI|Dallı mandalina
+MANDAL BEU|Mandalina (poşet)
+MANGO|Mango
+MUSMULA|Muşmula
+NAR|Nar
+NAR TR|Nar TR
+NAR TATLI|Tatlı nar
+NEKTARIN LOS|Nektarin (dökme)
+SHARONI|Şaron meyvesi
+SATSUMAS TR|Satsuma mandalina TR
+SEFTALI|Şeftali
+SEFTALI TR|Şeftali TR
+SCH ÜZÜM BEYA|Beyaz üzüm (kap)
+SCH ÜZÜM SIYA|Siyah üzüm (kap)
+SCHALE ERIK|Erik (kap)
+SCH SEFTALI|Şeftali (kap)
+SCH NEKTARI|Nektarin (kap)
+SCH ARMUT|Armut (kap)
+SCH KAKI|Trabzon hurması (kap)
+SCH KAYSI SAR|Sarı kayısı (kap)
+SCH KIWI|Kivi (kap)
+SCH ZWETSCH|Mürdüm erik (kap)
+SCH KAKTUS|Frenk inciri (kap)
+SCH YENIDÜNYA|Yenidünya (kap)
+GRAPEFRUIT|Greyfurt
+GRAPEFRUIT BEU|Greyfurt (poşet)
+YENI DÜNYA|Yenidünya
+CAGLA TR|Çağla TR
+FINDIK|Fındık
+CEVIZ|Ceviz
+BANANE|Muz
+MINI BANANE|Mini muz
+SAUER KIRSCHE|Vişne
+HIMBEEREN|Ahududu
+BLAUBEEREN|Yaban mersini
+BROMBEEREN|Böğürtlen
+OKRA|Bamya
+PALETTE KAKI|Trabzon hurması (palet)|Palette
+PALETTE KAVUN GALYA|Galya kavun (palet)|Palette
+PALETTE KAV YESIL BOX|Yeşil kavun kutu (palet)|Palette
+PALETTE KARPUZ BOX|Karpuz kutu (palet)|Palette
+PALETTE KARP CEK BOX|Çekirdeksiz karpuz kutu (palet)|Palette
+PALETTE MANDALIN TR|Mandalina TR (palet)|Palette
+PALETTE MANDALIN|Mandalina (palet)|Palette
+PALETTE MANDALN DAL|Dallı mandalina (palet)|Palette
+PALETTE MANDAL BEU|Mandalina poşet (palet)|Palette
+PALETTE PORTAKAL BEU|Portakal poşet (palet)|Palette
+PALETTE NAR TR|Nar TR (palet)|Palette
+PALETTE SULTANAS|Sultani üzüm (palet)|Palette
+PALETTE SATSUMAS TR|Satsuma TR (palet)|Palette
+FEIGEN|İncir
+FEIGEN SCHALE|İncir (kap)
+PAPAYA|Papaya
+MANGO FLUG|Mango (uçak)
+MANGO PAKIS|Mango Pakistan
+HURMA TAZE|Taze hurma
+PTAHAYA|Ejder meyvesi
+PASION FRUCH|Çarkıfelek meyvesi
+ARMUT DAG|Dağ armudu`};
 
 
 const ITEMS = {}; const BY = {g:[],o:[]};
 for (const c of ['g','o']) DATA[c].trim().split('\n').forEach((l,i)=>{
-  const [code,name,em,unit] = l.split('|'); const id = c+i;
-  ITEMS[id] = {id,c,code,name,em,pal:unit==='Palette'}; BY[c].push(id);
+  const [code,name,unit] = l.split('|'); const id = c+i;
+  ITEMS[id] = {id,c,code,name,pal:unit==='Palette'}; BY[c].push(id);
 });
 const unitOf = id => ITEMS[id].pal ? 'palet' : 'kasa';
 const KEY = 'meydan-v3';
@@ -416,14 +415,14 @@ function badge(id,k){ const n=k==='v'?V(id):O(id); if(!n) return '';
 function rowHTML(id){ const it=ITEMS[id], v=V(id), o=O(id);
   return `<div class="row ${v?'var':''} ${o?'sip':''}" data-id="${id}"><div class="bg"><span class="l">✓ VAR</span><span class="r">SİPARİŞ ✗</span></div>
     <div class="fg" tabindex="0" aria-label="${esc(it.name)}${v?', '+v+' '+unitOf(id)+' var':''}${o?', '+o+' '+unitOf(id)+' sipariş':''}">
-      <span class="em">${it.em}</span><span class="nm">${esc(it.name)}<small>${esc(it.code)}</small></span>
+      <span class="nm">${esc(it.name)}</span>
       <span class="side">${badge(id,'v')}${badge(id,'o')}</span>
     </div></div>`; }
 function fillList(){
-  const q=search.toLowerCase().trim();
+  const q=search.toLocaleLowerCase('tr').trim();
   const ids=BY[S.tab].filter(id=>{
     if(S.filter==='bekleyen'&&(V(id)||O(id))) return false; if(S.filter==='var'&&!V(id)) return false; if(S.filter==='sip'&&!O(id)) return false;
-    return !q||(ITEMS[id].name+' '+ITEMS[id].code).toLowerCase().includes(q); });
+    return !q||(ITEMS[id].name+' '+ITEMS[id].code).toLocaleLowerCase('tr').includes(q); });
   $('#stats').innerHTML=statsHTML();
   $('#stats').onclick=e=>{ const b=e.target.closest('.chip'); if(!b) return; S.filter=b.dataset.f; save(); fillList(); };
   $('#list').innerHTML = ids.length ? ids.map(rowHTML).join('') : `<div class="empty"><div><strong>Ürün yok</strong>Bu filtrede gösterilecek ürün bulunmuyor.</div></div>`;
@@ -479,12 +478,12 @@ function renderRes(){
   const mode=S.rmode;
   const sec=c=>{ const ids=rowsFor(c,mode); if(!ids.length) return '';
     const head = mode==='sip'
-      ? `<div class="th"><span></span><span>Ürün</span><span class="o">Sipariş</span></div>`
-      : `<div class="th three"><span></span><span>Ürün</span><span class="v">Var</span><span class="o">Sipariş</span></div>`;
+      ? `<div class="th"><span>Ürün</span><span class="o">Sipariş</span></div>`
+      : `<div class="th three"><span>Ürün</span><span class="v">Var</span><span class="o">Sipariş</span></div>`;
     const row=id=>{ const u=unitOf(id);
       return mode==='sip'
-        ? `<div class="ritem"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q o">${O(id)} ${u}</span></div>`
-        : `<div class="ritem three"><span>${ITEMS[id].em}</span><span>${esc(ITEMS[id].name)}</span><span class="q v">${V(id)?V(id)+' '+u:'–'}</span><span class="q o">${O(id)?O(id)+' '+u:'–'}</span></div>`; };
+        ? `<div class="ritem"><span>${esc(ITEMS[id].name)}</span><span class="q o">${O(id)} ${u}</span></div>`
+        : `<div class="ritem three"><span>${esc(ITEMS[id].name)}</span><span class="q v">${V(id)?V(id)+' '+u:'–'}</span><span class="q o">${O(id)?O(id)+' '+u:'–'}</span></div>`; };
     const tot = mode==='sip' ? `${ids.length} ürün · ${sum(ids,O)} sipariş` : `var ${sum(ids,V)} · sipariş ${sum(ids,O)}`;
     return `<section><h3>${nm[c]}<span>${tot}</span></h3>${head}${ids.map(row).join('')}</section>`; };
   const body=(S.tab==='g'?['g','o']:['o','g']).map(sec).join('');
@@ -532,16 +531,15 @@ async function savePdf(){
     for(const c of ['g','o']){ const ids=rowsFor(c,S.rmode); if(!ids.length) continue;
       y+=2; page(); const rgb=c==='g'?[46,122,58]:[201,88,26]; doc.setFillColor(...rgb); doc.rect(M,y-5,W-2*M,8,'F');
       doc.setTextColor(255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
-      doc.text(c==='g'?'SEBZE (GEMÜSE)':'MEYVE (OBST)',M+2,y);
+      doc.text(c==='g'?'SEBZE':'MEYVE',M+2,y);
       doc.text(A(sip?`${ids.length} ürün · ${sum(ids,O)} siparis`:`var ${sum(ids,V)} · siparis ${sum(ids,O)}`),W-M-2,y,{align:'right'});
       doc.setTextColor(0); y+=8;
-      doc.setFontSize(8); doc.setTextColor(110); doc.text('URUN',M+1,y); doc.text('KOD',M+92,y);
+      doc.setFontSize(8); doc.setTextColor(110); doc.text('URUN',M+1,y);
       if(!sip) doc.text('ELIMIZDE VAR',cV,y,{align:'right'}); doc.text('SIPARIS',cO,y,{align:'right'}); doc.setTextColor(0); y+=1;
       ids.forEach((id,i)=>{ y+=6; page(); if(i%2===0){ doc.setFillColor(243,245,242); doc.rect(M,y-4.3,W-2*M,6,'F'); }
         const u=unitOf(id);
-        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.text(ITEMS[id].name,M+1,y);
-        doc.setFontSize(8); doc.setTextColor(110); doc.text(ITEMS[id].code,M+92,y); doc.setTextColor(0);
-        doc.setFontSize(11);
+        doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.text(A(ITEMS[id].name),M+1,y);
+                doc.setFontSize(11);
         if(!sip){ doc.setTextColor(30,135,72); doc.text(V(id)?`${V(id)} ${u}`:'-',cV,y,{align:'right'}); }
         doc.setFont('helvetica','bold'); doc.setTextColor(194,65,12); doc.text(O(id)?`${O(id)} ${u}`:'-',cO,y,{align:'right'}); doc.setTextColor(0); });
       y+=10; }
